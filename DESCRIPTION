@@ -3,7 +3,7 @@ Type: Package
 Title: Functions for pharmacoepidemiology studies
 Version: 0.1.0
 Author: Claire Deakin
-Maintainer: Claire Deakin <c.deakin'at'unsw.edu.au>
+Maintainer: Claire Deakin <c.deakin@unsw.edu.au>
 Description: Functions for pharmacoepidemiology studies
     So far includes functions to calculate the estimated period of exposure (EPE) using PBS item codes dispensing dates, and the duration of exposure to medicines using ATC codes, based on dispensing dates and the EPE
 License: What license is it under?
