@@ -38,7 +38,7 @@ epe <- function(data,
   #' max_time_period = 120
   #' )
   #'
-  #' @examples using 'mydata'
+  #' Example using 'mydata' sample dataset provided with the package
   #' epe(data=mydata, id="PPN", pbs_code="PBS", date_dispensing="dispensing_date")
   #'
   #' @references Anton Pottegård and Jesper Hallas, "Assigning exposure duration to single prescriptions by use of the waiting time distribution" (2013) Pharmacoepidemiology and Drug Safety 22(8):803-809. DOI:10.1002/PDS.3459

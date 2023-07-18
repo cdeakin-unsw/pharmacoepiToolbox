@@ -59,8 +59,8 @@ exposure_period <- function(data,
   #' gap_days = 120
   #' )
   #'
-  #' @examples using 'mydata'
-  #' epe_table <- epe(data=mydata, id="PPN", pbs_code="PBS", date_dispensing="dispensing_date")
+  #' Example using 'mydata' sample dataset provided with the package
+  #' epe_res <- epe(data=mydata, id="PPN", pbs_code="PBS", date_dispensing="dispensing_date")
   #' exposure_period(data=mydata, epe_table=epe_res$epe_table, id="PPN", atc_code="ATC_code", pbs_code="PBS", date_dispensing="dispensing_date")
   #'
   #' @references Anton Pottegård and Jesper Hallas, "Assigning exposure duration to single prescriptions by use of the waiting time distribution" (2013) Pharmacoepidemiology and Drug Safety 22(8):803-809. DOI:10.1002/PDS.3459
