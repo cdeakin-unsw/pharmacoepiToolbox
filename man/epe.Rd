@@ -2,13 +2,14 @@
 % Please edit documentation in R/epe.R
 \name{epe}
 \alias{epe}
-\title{Function to calculate the estimated period of exposure to dispensed medicines based on dispensing dates}
+\title{Function to calculate the estimated period of exposure to dispensed medicines based on dispensing dates (aka the waiting time distribution)}
 \usage{
 epe(
   data,
   id,
   pbs_code,
   date_dispensing,
+  use_75th_percentile = TRUE,
   selected_pbs_codes = unique(pbs_code),
   max_time_period = 180
 )
@@ -21,6 +22,8 @@ epe(
 \item{pbs_code}{name of character vector in `data` specifying the PBS code for the medicine. To use, specify pbs_code="your_pbs_code_variable_name"}
 
 \item{date_dispensing}{name of date vector in `data` specifying the dates on which each medicine were dispensed. To use, specify date_dispensing="your_date_of_dispensing_variable_name"}
+
+\item{use_75th_percentile}{logical vector to specify whether the 75th percentile should be used as the EPE value. Default is `TRUE` i.e. the 75th percentile is used. If set to `FALSE` then the median is used instead}
 
 \item{selected_pbs_codes}{optional character vector specifying the PBS codes of interest if EPE is to be calculated for those codes only. If you don't use or specify anything for this argument, the code will still run and use all PBS codes. To use, specify selected_pbs_codes=c("pbs_code1", "pbs_code2", "pbs_code3" etc)}
 
@@ -43,6 +46,9 @@ selected_pbs_codes = c("code1", "code2", "code3")
 epe(data=your_input_data, id="your_id_variable_name", pbs_code="your_pbs_code_variable_name", date_dispensing="your_dispensing_date_variable_name",
 max_time_period = 120
 )
+
+Example using 'mydata' sample dataset provided with the package
+epe(data=mydata, id="PPN", pbs_code="PBS", date_dispensing="dispensing_date")
 
 }
 \references{

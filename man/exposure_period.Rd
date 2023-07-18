@@ -40,7 +40,8 @@ Object of class data.frame containing the id, atc_code, exposure_start, exposure
 }
 \description{
 Uses dispensing dates and the output from the `epe` function to calculate the exposure period in days to a given medicine, based on ATC codes and the EPE value calculated for each PBS code.
-The exposure period is the number of days from the first date of dispensing until 1x EPE after the last date of dispensing. Gaps in dispensing are excluded from this period based on a default of 3x EPE days, however, other values can be specified e.g. a number of days or a different integer multiplier of the EPE
+The exposure period is the number of days from the first date of dispensing until 1x EPE after the last date of dispensing. Gaps in dispensing are excluded from this period based on a default of 3x EPE days, however, other values can be specified e.g. a number of days or a different integer multiplier of the EPE.
+Gap periods are calculated based on the EPE value for the PBS code for the medicine dispensed immediately prior to the gap.
 }
 \examples{
 exposure_period(data = your_input_data,
@@ -70,7 +71,13 @@ gap_as_epe_multiplier = FALSE,
 gap_days = 120
 )
 
-#' @references Anton Pottegård and Jesper Hallas, "Assigning exposure duration to single prescriptions by use of the waiting time distribution" (2013) Pharmacoepidemiology and Drug Safety 22(8):803-809. DOI:10.1002/PDS.3459
+Example using 'mydata' sample dataset provided with the package
+epe_res <- epe(data=mydata, id="PPN", pbs_code="PBS", date_dispensing="dispensing_date")
+exposure_period(data=mydata, epe_table=epe_res$epe_table, id="PPN", atc_code="ATC_code", pbs_code="PBS", date_dispensing="dispensing_date")
+
+}
+\references{
+Anton Pottegård and Jesper Hallas, "Assigning exposure duration to single prescriptions by use of the waiting time distribution" (2013) Pharmacoepidemiology and Drug Safety 22(8):803-809. DOI:10.1002/PDS.3459
 }
 \author{
 Claire Deakin
