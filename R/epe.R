@@ -6,10 +6,11 @@ epe <- function(data,
                 id,
                 pbs_code,
                 date_dispensing,
+                use_75th_percentile=TRUE,
                 selected_pbs_codes=unique(pbs_code),
                 max_time_period=180) {
   #'
-  #' @title Function to calculate the estimated period of exposure to dispensed medicines based on dispensing dates
+  #' @title Function to calculate the estimated period of exposure to dispensed medicines based on dispensing dates (aka the waiting time distribution)
   #' @author Claire Deakin
   #' @description
   #' Uses dispensing dates to calculate the estimated period of exposure (EPE) as the 75th percentile of the distribution of time periods between dispensings of medicines at the level of PBS codes.
@@ -19,6 +20,7 @@ epe <- function(data,
   #' @param data data.frame containing input data; check your input data is a data.frame and not a tibble, coerce to data.frame if necessary. To use, specify data=your_input_data
   #' @param id name of character vector in `data` specifying a unique identifier for individual people/patients (can handle integer variables). To use, specify id="your_id_variable_name"
   #' @param pbs_code name of character vector in `data` specifying the PBS code for the medicine. To use, specify pbs_code="your_pbs_code_variable_name"
+  #' @param use_75th_percentile logical vector to specify whether the 75th percentile should be used as the EPE value. Default is `TRUE` i.e. the 75th percentile is used. If set to `FALSE` then the median is used instead
   #' @param date_dispensing name of date vector in `data` specifying the dates on which each medicine were dispensed. To use, specify date_dispensing="your_date_of_dispensing_variable_name"
   #' @param selected_pbs_codes optional character vector specifying the PBS codes of interest if EPE is to be calculated for those codes only. If you don't use or specify anything for this argument, the code will still run and use all PBS codes. To use, specify selected_pbs_codes=c("pbs_code1", "pbs_code2", "pbs_code3" etc)
   #' @param max_time_period integer value specifying the maximum permitted number of days between dispensing to be included in the distribution of time periods used to calculate the EPE. Time periods longer than this value will be excluded. Default value is 180 days i.e. if you don' use or specify anything for this argument, the code will still run and use 180 days as this value
@@ -55,24 +57,21 @@ epe <- function(data,
 
     ## checks of input data
 
-    # convert id and pbs_code to character variables and pad with leading zeros, up to the character length of the largest value
-
-
-    #  data <- data %>%
-    #      mutate(id = ifelse((is.character(id)),
-    #                          id,
-    #                          as.character(id)
-    #                          )
-    #           )
-    #      mutate(pbs_code = ifelse((is.character(pbs_code)),
-    #                          pbs_code,
-    #                          as.character(pbs_code)
-    #                          )
-    #           )
+    # check the date_dispensing variable is a 'date'
 
     if(!is.Date(data$date_dispensing)) {
       stop("date_dispensing is not a vector of class 'date'", call. = FALSE)
     }
+
+
+    ## if use_75th_percentile is set to true, use the 75th percentile; otherwise use the median
+
+    if(use_75th_percentile==TRUE) {
+      percentile <- "75%"
+    } else {
+      percentile <- "50%"
+    }
+
 
     ## within each individual and PBS code, order by date then calculate time periods between dispensings
 
@@ -97,7 +96,7 @@ epe <- function(data,
     epe_table <- data %>%
       group_by(pbs_code) %>%
       summarise(
-        epe_value = quantile(days_until_next_dispensing, na.rm=TRUE)[[4]]
+        epe_value = quantile(days_until_next_dispensing, na.rm=TRUE)[[percentile]]
       ) %>%
       ungroup()
 
