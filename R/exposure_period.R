@@ -16,7 +16,8 @@ exposure_period <- function(data,
   #' @author Claire Deakin
   #' @description
   #' Uses dispensing dates and the output from the `epe` function to calculate the exposure period in days to a given medicine, based on ATC codes and the EPE value calculated for each PBS code.
-  #' The exposure period is the number of days from the first date of dispensing until 1x EPE after the last date of dispensing. Gaps in dispensing are excluded from this period based on a default of 3x EPE days, however, other values can be specified e.g. a number of days or a different integer multiplier of the EPE
+  #' The exposure period is the number of days from the first date of dispensing until 1x EPE after the last date of dispensing. Gaps in dispensing are excluded from this period based on a default of 3x EPE days, however, other values can be specified e.g. a number of days or a different integer multiplier of the EPE.
+  #' Gap periods are calculated based on the EPE value for the PBS code for the medicine dispensed immediately prior to the gap.
   #'
   #' @param data data.frame containing input data; check your input data is a data.frame and not a tibble, coerce to data.frame if necessary. To use, specify data=your_input_data
   #' @param epe_table data.frame object containing PBS codes and EPE values e.g. if output from `epe` function stored as epe_res, use epe_table = epe_res$epe_table to extract the epe_table from the list object
