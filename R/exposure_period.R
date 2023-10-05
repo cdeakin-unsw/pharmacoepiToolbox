@@ -10,7 +10,9 @@ exposure_period <- function(data,
                             date_dispensing,
                             gap_as_epe_multiplier = TRUE,
                             gap_days = NULL,
-                            epe_gap_multiplier=3) {
+                            epe_gap_multiplier=3
+                            epe_gap_multiple_dispensings_same_date = TRUE
+                            ) {
 
   #' @title Function to calculate the time period an individual has been exposed to a dispensed medicine
   #' @author Claire Deakin
@@ -28,6 +30,7 @@ exposure_period <- function(data,
   #' @param gap_as_epe_multiplier argument to specify whether a gap in treatment will be identified based on being an integer value multiplied by the EPE, with that integer value specified in the epe_gap_multiplier argument. Defaults to TRUE
   #' @param gap_days optional integer value to use if gap_as_epe_multiplier = FALSE, to specify the number of days to use as a gap a gap isn't defined as an integer value multipled by the EPE
   #' @param epe_gap_multiplier optional argument to specify the integer to multiply the EPE by to define a gap. Defaults to 3 if no value is given by the user
+  #' @param epe_gap_multiple_dispensings_same_date optional argument to specify whether identifying a gap in treatment will accommodate the period covered by multiple dispensings on the same date. Defaults to TRUE i.e. the total period covered by multiple dispensings is accommodated
   #'
   #' @returns Object of class data.frame containing the id, atc_code, exposure_start, exposure_end, number_dispensings and exposure_days
   #'
@@ -115,13 +118,41 @@ exposure_period <- function(data,
     }
 
 
-    ## group temp_dat by id and then atc_code, add index variable
+    ## group temp_dat by id, then atc_code and date_dispensing
+    ## for situations where there are >2 dispensings of the same atc_code on the same date:
+    ## (1) replace epe_value with the sum of all epe_values for all medicines with that atc_code dispensed on that date
+    ## (2) replace gap_size with the sum of all gap_size values for all medicines
+    ## (3) use head to extract the first dispensing_date and PBS code (this is a nominal choice for the PBS code)
+    ## use summarise to generate these new variables, output as temp_dat2
+    ## note that multiple dispensings of the same atc_code on the same date is taken into account for calculating gaps
+    ## to prevent incorrect identification of gaps
+    ## but multiple dispensings on the same date prior to the final date of dispensing will not be accounted for
+    ## as carryover of supply since the EPE already takes this into account
+    temp_dat2 <- temp_dat %>%
+      group_by(id, atc_code, date_dispensing) %>%
+      summarise(PBS = head(PBS, n=1),
+                PPN = head(PPN, n=1),
+                dispensing_date = head(dispensing_date, n=1),
+                pbs_code = head(pbs_code, n=1),
+                epe_value = sum(epe_value),
+                gap_size = sum(gap_size)
+                ) %>%
+      ungroup()
+
+
+    ## if epe_gap_multiple_dispensings_same_date == FALSE, then override the above i.e. replace temp_dat2 with temp_dat
+    if(epe_gap_multiple_dispensings_same_date == FALSE) {
+      temp_dat2 <- temp_dat
+    }
+
+
+    ## group temp_dat2 by id and then atc_code, add index variable
     ## then add variable for lead_date_dispensing to represent the next date of dispensing following each record
     ## calculate the difference in days between lead_date_dispensing and date_dispensing
     ## make a flag variable to indicate whether this difference is > gap_size
     ## calculate the cumulative sum of gap_flag to use for filtering (the first record >0 is the first gap to be excluded i.e. keep all gap_flag==0)
     ## add epe_value to the dispensing dates (so we can extract the last dispensing date plus EPE based on filtering cumsum==0 and max of index)
-    temp_dat <- temp_dat %>%
+    temp_dat2 <- temp_dat2 %>%
       group_by(id, atc_code) %>%
       mutate(index = c(1:length(id)),
              lead_date_dispensing  = lead(date_dispensing ),
@@ -142,7 +173,7 @@ exposure_period <- function(data,
     ## summarise (for each id and atc_code) the exposure_start as the first date_dispensing, the exposure_end as the last date_dispensing_plus_epe and the number_dispensings
     ## note that we add 1 to the index to calculate the number of dispensings because filtering on cumsum_gap_flag==0 excludes the last included date of dispensing (and this entry has cumsum_gap_flag==NA)
     ## calculate the exposure_days as exposure_end minus exposure_start
-    temp_dat_summary_1 <- temp_dat %>%
+    temp_dat_summary_1 <- temp_dat2 %>%
       group_by(id, atc_code) %>%
       filter(cumsum_gap_flag == 0 & max(index) > 2) %>%       # arguably the cumsum_gap_flag == 0 is redundant when filtering on max(index) > 2 but keep it in for now
       summarise(
@@ -159,7 +190,7 @@ exposure_period <- function(data,
     ## again summarise (for each id and atc_code) the exposure_start as the first date_dispensing, the exposure_end as the FIRST date_dispensing_plus_epe and the number_dispensings
     ## note that the number_dispensings and exposure_end use head here rather than tail because the true number of dispensings without a gap is 1
     ## calculate the exposure_days as exposure_end minus exposure_start
-    temp_dat_summary_2 <- temp_dat %>%
+    temp_dat_summary_2 <- temp_dat2 %>%
       group_by(id, atc_code) %>%
       filter(max(index) == 1 | (max(index) == 2 & head(cumsum_gap_flag, n=1) == 1)) %>%
       summarise(
@@ -175,7 +206,7 @@ exposure_period <- function(data,
     ## group by id then atc_code again
     ## again summarise (for each id and atc_code) the exposure_start as the first date_dispensing, the exposure_end as the last date_dispensing_plus_epe and the number_dispensings
     ## note that we don't need to add 1 to the index to calculate the number of dispensings because we did not filter on cumsum_gap_flag==0
-    temp_dat_summary_3 <- temp_dat %>%
+    temp_dat_summary_3 <- temp_dat2 %>%
       group_by(id, atc_code) %>%
       filter((max(index) == 2 & head(cumsum_gap_flag, n=1) == 0)) %>%
       summarise(
