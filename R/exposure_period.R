@@ -10,7 +10,7 @@ exposure_period <- function(data,
                             date_dispensing,
                             gap_as_epe_multiplier = TRUE,
                             gap_days = NULL,
-                            epe_gap_multiplier=3
+                            epe_gap_multiplier=3,
                             epe_gap_multiple_dispensings_same_date = TRUE
                             ) {
 
