@@ -5,6 +5,7 @@
 epe <- function(data,
                 id,
                 pbs_code,
+                atc_code,
                 date_dispensing,
                 use_75th_percentile=TRUE,
                 selected_pbs_codes=unique(pbs_code),
@@ -20,6 +21,7 @@ epe <- function(data,
   #' @param data data.frame containing input data; check your input data is a data.frame and not a tibble, coerce to data.frame if necessary. To use, specify data=your_input_data
   #' @param id name of character vector in `data` specifying a unique identifier for individual people/patients (can handle integer variables). To use, specify id="your_id_variable_name"
   #' @param pbs_code name of character vector in `data` specifying the PBS code for the medicine. To use, specify pbs_code="your_pbs_code_variable_name"
+  #' @param atc_code name of character vector in `data` specifying the ATC code for the medicine. To use, specify atc_code="your_atc_code_variable_name"
   #' @param use_75th_percentile logical vector to specify whether the 75th percentile should be used as the EPE value. Default is `TRUE` i.e. the 75th percentile is used. If set to `FALSE` then the median is used instead
   #' @param date_dispensing name of date vector in `data` specifying the dates on which each medicine were dispensed. To use, specify date_dispensing="your_date_of_dispensing_variable_name"
   #' @param selected_pbs_codes optional character vector specifying the PBS codes of interest if EPE is to be calculated for those codes only. If you don't use or specify anything for this argument, the code will still run and use all PBS codes. To use, specify selected_pbs_codes=c("pbs_code1", "pbs_code2", "pbs_code3" etc)
@@ -53,6 +55,7 @@ epe <- function(data,
 
     data$id <- data[, which(names(data)==id)]
     data$pbs_code <- data[, which(names(data)==pbs_code)]
+    data$atc_code <- data[, which(names(data)==atc_code)]
     data$date_dispensing <- data[, which(names(data)==date_dispensing)]
 
     ## checks of input data
@@ -96,6 +99,7 @@ epe <- function(data,
     epe_table <- data %>%
       group_by(pbs_code) %>%
       summarise(
+        atc_code = head(atc_code, n = 1),
         epe_value = quantile(days_until_next_dispensing, na.rm=TRUE)[[percentile]]
       ) %>%
       ungroup()

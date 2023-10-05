@@ -130,9 +130,7 @@ exposure_period <- function(data,
     ## as carryover of supply since the EPE already takes this into account
     temp_dat2 <- temp_dat %>%
       group_by(id, atc_code, date_dispensing) %>%
-      summarise(PBS = head(PBS, n=1),
-                PPN = head(PPN, n=1),
-                dispensing_date = head(dispensing_date, n=1),
+      summarise(dispensing_date = head(dispensing_date, n=1),
                 pbs_code = head(pbs_code, n=1),
                 epe_value = sum(epe_value),
                 gap_size = sum(gap_size)
