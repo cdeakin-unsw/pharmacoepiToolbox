@@ -8,6 +8,7 @@ epe(
   data,
   id,
   pbs_code,
+  atc_code,
   date_dispensing,
   use_75th_percentile = TRUE,
   selected_pbs_codes = unique(pbs_code),
@@ -20,6 +21,8 @@ epe(
 \item{id}{name of character vector in `data` specifying a unique identifier for individual people/patients (can handle integer variables). To use, specify id="your_id_variable_name"}
 
 \item{pbs_code}{name of character vector in `data` specifying the PBS code for the medicine. To use, specify pbs_code="your_pbs_code_variable_name"}
+
+\item{atc_code}{name of character vector in `data` specifying the ATC code for the medicine. To use, specify atc_code="your_atc_code_variable_name"}
 
 \item{date_dispensing}{name of date vector in `data` specifying the dates on which each medicine were dispensed. To use, specify date_dispensing="your_date_of_dispensing_variable_name"}
 

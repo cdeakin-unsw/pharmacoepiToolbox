@@ -13,7 +13,8 @@ exposure_period(
   date_dispensing,
   gap_as_epe_multiplier = TRUE,
   gap_days = NULL,
-  epe_gap_multiplier = 3
+  epe_gap_multiplier = 3,
+  epe_gap_multiple_dispensings_same_date = TRUE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ exposure_period(
 \item{gap_days}{optional integer value to use if gap_as_epe_multiplier = FALSE, to specify the number of days to use as a gap a gap isn't defined as an integer value multipled by the EPE}
 
 \item{epe_gap_multiplier}{optional argument to specify the integer to multiply the EPE by to define a gap. Defaults to 3 if no value is given by the user}
+
+\item{epe_gap_multiple_dispensings_same_date}{optional argument to specify whether identifying a gap in treatment will accommodate the period covered by multiple dispensings on the same date. Defaults to TRUE i.e. the total period covered by multiple dispensings is accommodated}
 }
 \value{
 Object of class data.frame containing the id, atc_code, exposure_start, exposure_end, number_dispensings and exposure_days
