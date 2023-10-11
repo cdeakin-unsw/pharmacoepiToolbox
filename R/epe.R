@@ -99,7 +99,7 @@ epe <- function(data,
     epe_table <- data %>%
       group_by(pbs_code) %>%
       summarise(
-        atc_code = head(atc_code, n = 1),
+        ATC_code = head(atc_code, n = 1),
         epe_value = quantile(days_until_next_dispensing, na.rm=TRUE)[[percentile]]
       ) %>%
       ungroup()
