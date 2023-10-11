@@ -122,7 +122,7 @@ exposure_period <- function(data,
     ## for situations where there are >2 dispensings of the same atc_code on the same date:
     ## (1) replace epe_value with the sum of all epe_values for all medicines with that atc_code dispensed on that date
     ## (2) replace gap_size with the sum of all gap_size values for all medicines
-    ## (3) use head to extract the first dispensing_date and PBS code (this is a nominal choice for the PBS code)
+    ## (3) use head to extract the first date_dispensing and PBS code (this is a nominal choice for the PBS code)
     ## use summarise to generate these new variables, output as temp_dat2
     ## note that multiple dispensings of the same atc_code on the same date is taken into account for calculating gaps
     ## to prevent incorrect identification of gaps
@@ -130,7 +130,7 @@ exposure_period <- function(data,
     ## as carryover of supply since the EPE already takes this into account
     temp_dat2 <- temp_dat %>%
       group_by(id, atc_code, date_dispensing) %>%
-      summarise(dispensing_date = head(dispensing_date, n=1),
+      summarise(date_dispensing = head(date_dispensing, n=1),
                 pbs_code = head(pbs_code, n=1),
                 epe_value = sum(epe_value),
                 gap_size = sum(gap_size)
