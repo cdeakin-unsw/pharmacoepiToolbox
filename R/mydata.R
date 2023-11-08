@@ -6,7 +6,7 @@
 #'
 #' @usage data(mydata)
 #'
-#' @format ## `mydata`
+#' @format `mydata`
 #' A data frame with 108 rows and 5 columns:
 #' \describe{
 #'   \item{PPN}{Individual identifier}
