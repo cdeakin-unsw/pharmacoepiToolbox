@@ -5,7 +5,7 @@
 \alias{mydata}
 \title{Made up toy dataset to practise running 'epe' and 'exposure_period' functions}
 \format{
-## `mydata`
+`mydata`
 A data frame with 108 rows and 5 columns:
 \describe{
   \item{PPN}{Individual identifier}
@@ -14,8 +14,14 @@ A data frame with 108 rows and 5 columns:
   \item{dispensing_date}{Date on which medicine was dispensed}
   ...
   }
-
- @examples
+}
+\usage{
+data(mydata)
+}
+\description{
+Simulated data to generate known values for the EPE and exposure period
+}
+\examples{
  # load the data
  data(mydata)
 
@@ -36,11 +42,6 @@ A data frame with 108 rows and 5 columns:
  #6     5 x002     2018-04-20     2019-06-20                   10          426.
  #7     6 x002     2019-10-18     2021-11-03                   16          747.
  #8     7 x002     2017-05-31     2018-12-27                   13          575.
-}
-\usage{
-data(mydata)
-}
-\description{
-Simulated data to generate known values for the EPE and exposure period
+
 }
 \keyword{datasets}

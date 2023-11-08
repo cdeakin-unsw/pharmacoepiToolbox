@@ -16,7 +16,7 @@
 #'   ...
 #'   }
 #'
-#'  @examples
+#' @examples
 #'  # load the data
 #'  data(mydata)
 #'
