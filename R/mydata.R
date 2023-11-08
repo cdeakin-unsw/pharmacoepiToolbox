@@ -14,6 +14,7 @@
 #'   \item{PBS}{Pharmaceutical Benefit Scheme code for medicine (fictitious code)}
 #'   \item{dispensing_date}{Date on which medicine was dispensed}
 #'   ...
+#'   }
 #'
 #'  @examples
 #'  # load the data
@@ -38,3 +39,4 @@
 #'  #8     7 x002     2017-05-31     2018-12-27                   13          575.
 #'
 "mydata"
+
