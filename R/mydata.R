@@ -13,7 +13,8 @@
 #'   \item{ATC_code}{Anatomical Therapeutic Code for medicine (fictitious code)}
 #'   \item{PBS}{Pharmaceutical Benefit Scheme code for medicine (fictitious code)}
 #'   \item{dispensing_date}{Date on which medicine was dispensed}
-#'   ...}
+#'   ...
+#'   }
 #'
 #'  @examples
 #'  # load the data
