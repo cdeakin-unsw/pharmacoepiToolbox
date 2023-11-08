@@ -5,14 +5,15 @@
 \alias{mydata}
 \title{Made up toy dataset to practise running 'epe' and 'exposure_period' functions}
 \format{
-`mydata`
+## `mydata`
 A data frame with 108 rows and 5 columns:
-\describe{}
+\describe{
   \item{PPN}{Individual identifier}
   \item{ATC_code}{Anatomical Therapeutic Code for medicine (fictitious code)}
   \item{PBS}{Pharmaceutical Benefit Scheme code for medicine (fictitious code)}
   \item{dispensing_date}{Date on which medicine was dispensed}
   ...
+  }
 
  @examples
  # load the data
