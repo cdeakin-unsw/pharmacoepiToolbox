@@ -109,7 +109,7 @@ exposure_period <- function(data,
     temp_dat <- temp_dat %>% mutate(gap_size = epe_gap_multiplier * epe_value)
 
 
-    ## if gap_as_epe_multiplier == FALSE and a value was specified for gap_days, repace gap_size with that gap_days value
+    ## if gap_as_epe_multiplier == FALSE and a value was specified for gap_days, replace gap_size with that gap_days value
     if(gap_as_epe_multiplier == FALSE & !missing(gap_days)) {
       temp_dat <- temp_dat %>%
         mutate(gap_size = rep(gap_days, nrow(temp_dat)))
@@ -132,6 +132,8 @@ exposure_period <- function(data,
     ## calculate the difference in days between lead_date_dispensing and date_dispensing
     ## make a flag variable to indicate whether this difference is > gap_size
     ## calculate the cumulative sum of gap_flag to use for filtering (the first record >0 is the first gap to be excluded i.e. keep all gap_flag==0)
+    ## multiply this cumsum_gap_flag by the index to help identify the first non-zero cumsum_gap_flag
+    ## make flag for the first non-zero cumsum_gap_flag
     ## add epe_value to the dispensing dates (so we can extract the last dispensing date plus EPE based on filtering cumsum==0 and max of index)
     temp_dat <- temp_dat %>%
       group_by(id, atc_code) %>%
@@ -143,8 +145,24 @@ exposure_period <- function(data,
                                 0
              ),
              cumsum_gap_flag = cumsum(gap_flag),
+             cumsum_gap_flag_mult_index = cumsum_gap_flag * index,
+             first_pos_cumsum_gap_flag_mult_index = ifelse(cumsum_gap_flag_mult_index == min(cumsum_gap_flag_mult_index[cumsum_gap_flag_mult_index > 0], na.rm=TRUE),
+                                                            1,
+                                                            0),
              date_dispensing_plus_epe = (date_dispensing + epe_value)
       ) %>%
+      ungroup()
+
+
+    ## group by id and atc_code, then identify records to exclude that follow the first gap in treatment
+    ## to do this, select records where cum_sum_gap_flag_mult_index is equal to 0 OR cum_sum_gap_flag_mult_index is missing and the maximum index is 1 OR the smallest non-missing cum_sum_gap_flag_mult_index
+    temp_dat <- temp_dat %>%
+      group_by(id, atc_code) %>%
+      mutate(keep = if_else((cumsum_gap_flag_mult_index==0 | (is.na(cumsum_gap_flag_mult_index) & max(index)==1) | first_pos_cumsum_gap_flag_mult_index==1),
+                            1,
+                            0)
+             ) %>%
+      filter(keep==1) %>%
       ungroup()
 
 
@@ -156,7 +174,7 @@ exposure_period <- function(data,
     ## calculate the exposure_days as exposure_end minus exposure_start
     temp_dat_summary_1 <- temp_dat %>%
       group_by(id, atc_code) %>%
-      filter(cumsum_gap_flag == 0 & max(index) > 2) %>%       # arguably the cumsum_gap_flag == 0 is redundant when filtering on max(index) > 2 but keep it in for now
+      filter(max(index) > 2) %>%       # arguably the cumsum_gap_flag == 0 is redundant when filtering on max(index) > 2 but keep it in for now
       summarise(
         exposure_start = head(date_dispensing, n=1),
         exposure_end = tail(date_dispensing_plus_epe, n=1),
