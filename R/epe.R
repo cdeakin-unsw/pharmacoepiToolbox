@@ -11,7 +11,7 @@ epe <- function(data,
                 selected_pbs_codes=unique(pbs_code),
                 max_time_period=180) {
   #'
-  #' @title Function to calculate the estimated period of exposure to dispensed medicines based on dispensing dates (aka the waiting time distribution)
+  #' @title Function to calculate the estimated period of exposure to dispensed medicines based on dispensing dates
   #' @author Claire Deakin
   #' @description
   #' Uses dispensing dates to calculate the estimated period of exposure (EPE) as the 75th percentile of the distribution of time periods between dispensings of medicines at the level of PBS codes.
@@ -41,7 +41,7 @@ epe <- function(data,
   #' )
   #'
   #' Example using 'mydata' sample dataset provided with the package
-  #' epe(data=mydata, id="PPN", pbs_code="PBS", date_dispensing="dispensing_date")
+  #' epe(data=mydata, id="PPN", atc_code="ATC_code", pbs_code="PBS", date_dispensing="dispensing_date")
   #'
   #' @references Anton Pottegård and Jesper Hallas, "Assigning exposure duration to single prescriptions by use of the waiting time distribution" (2013) Pharmacoepidemiology and Drug Safety 22(8):803-809. DOI:10.1002/PDS.3459
 

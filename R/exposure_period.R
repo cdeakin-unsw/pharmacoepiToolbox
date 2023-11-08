@@ -92,9 +92,9 @@ exposure_period <- function(data,
       stop("must supply a value for 'gap_days' if gap_as_epe_multiplier == FALSE", call. = FALSE)
     }
 
-    ## check temp_dat is ordered by id then date_dispensing
+    ## check temp_dat is ordered by id then atc_code and date_dispensing
     temp_dat <- temp_dat %>%
-      arrange(id, date_dispensing)
+      arrange(id, atc_code, date_dispensing)
 
 
     ## merge the epe_table with temp on pbs_code to bring the epe_value variable into temp_dat
@@ -114,6 +114,17 @@ exposure_period <- function(data,
       temp_dat <- temp_dat %>%
         mutate(gap_size = rep(gap_days, nrow(temp_dat)))
     }
+
+
+    ## identify instances where the last dispensing date is repeated for a given combination of id and pbs_code i.e. multiple dispensings on same date
+    ## calculate the number of repeats as num_dispensings_same_date
+    ## where this occurs, edit the epe_value to the num_repeats_same_date * epe_value
+    temp_dat <- temp_dat %>%
+      group_by(id, pbs_code, date_dispensing) %>%
+      mutate(num_dispensings_same_date = row_number(),
+             epe_value = epe_value * num_dispensings_same_date
+             ) %>%
+      ungroup()
 
 
     ## group temp_dat by id and then atc_code, add index variable
@@ -182,7 +193,7 @@ exposure_period <- function(data,
       summarise(
         exposure_start = head(date_dispensing, n=1),
         exposure_end = tail(date_dispensing_plus_epe, n=1),
-        number_dispensings = (tail(index, n=1)),
+        number_dispensings = tail(index, n=1),
         exposure_days = as.numeric(exposure_end - exposure_start)
       )
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/epe.R
 \name{epe}
 \alias{epe}
-\title{Function to calculate the estimated period of exposure to dispensed medicines based on dispensing dates (aka the waiting time distribution)}
+\title{Function to calculate the estimated period of exposure to dispensed medicines based on dispensing dates}
 \usage{
 epe(
   data,
@@ -51,7 +51,7 @@ max_time_period = 120
 )
 
 Example using 'mydata' sample dataset provided with the package
-epe(data=mydata, id="PPN", pbs_code="PBS", date_dispensing="dispensing_date")
+epe(data=mydata, id="PPN", atc_code="ATC_code", pbs_code="PBS", date_dispensing="dispensing_date")
 
 }
 \references{
