@@ -130,7 +130,7 @@ exposure_period <- function(data,
     ## group temp_dat by id and then atc_code, add index variable
     ## then add variable for lead_date_dispensing to represent the next date of dispensing following each record
     ## calculate the difference in days between lead_date_dispensing and date_dispensing
-    ## make a flag variable to indicate whether this difference is > gap_size
+    ## make a flag variable to indicate whether this difference is non-missing AND > gap_size (note the last record will always have a missing date_diff)
     ## calculate the cumulative sum of gap_flag to use for filtering (the first record >0 is the first gap to be excluded i.e. keep all gap_flag==0)
     ## multiply this cumsum_gap_flag by the index to help identify the first non-zero cumsum_gap_flag
     ## make flag for the first non-zero cumsum_gap_flag
@@ -140,7 +140,7 @@ exposure_period <- function(data,
       mutate(index = c(1:length(id)),
              lead_date_dispensing  = lead(date_dispensing ),
              date_diff = as.numeric(lead_date_dispensing  - date_dispensing ),
-             gap_flag = if_else((date_diff > gap_size),
+             gap_flag = if_else(!is.na(date_diff) & date_diff > gap_size,
                                 1,
                                 0
              ),
@@ -155,7 +155,8 @@ exposure_period <- function(data,
 
 
     ## group by id and atc_code, then identify records to exclude that follow the first gap in treatment
-    ## to do this, select records where cum_sum_gap_flag_mult_index is equal to 0 OR cum_sum_gap_flag_mult_index is missing and the maximum index is 1 OR the smallest non-missing cum_sum_gap_flag_mult_index
+    ## to do this, select records where cum_sum_gap_flag_mult_index is equal to 0 OR cum_sum_gap_flag_mult_index is missing and the maximum index is 1 OR
+                ## the smallest non-missing cum_sum_gap_flag_mult_index
     temp_dat <- temp_dat %>%
       group_by(id, atc_code) %>%
       mutate(keep = if_else((cumsum_gap_flag_mult_index==0 | (is.na(cumsum_gap_flag_mult_index) & max(index)==1) | first_pos_cumsum_gap_flag_mult_index==1),
