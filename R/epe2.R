@@ -62,9 +62,9 @@ epe2 <- function(data,
 
     # check the date_dispensing variable is a 'date'
 
-    if(!is.Date(data$date_dispensing)) {
-      stop("date_dispensing is not a vector of class 'date'", call. = FALSE)
-    }
+    #if(!is.Date(data$date_dispensing)) {
+    #  stop("date_dispensing is not a vector of class 'date'", call. = FALSE)
+    #}
 
 
     ## if use_75th_percentile is set to true, use the 75th percentile; otherwise use the median
