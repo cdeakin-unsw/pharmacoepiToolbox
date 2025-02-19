@@ -11,11 +11,12 @@ epe2 <- function(data,
                 selected_pbs_codes=unique(pbs_code),
                 max_time_period=180) {
   #'
-  #' @title Function to calculate the estimated period of exposure to dispensed medicines based on dispensing dates
+  #' @title Copy of function to calculate the estimated period of exposure to dispensed medicines based on dispensing dates
   #' @author Claire Deakin
   #' @description
-  #' Uses dispensing dates to calculate the estimated period of exposure (EPE) as the 75th percentile of the distribution of time periods between dispensings of medicines at the level of PBS codes.
+  #' Copy of 'epe' function which uses dispensing dates to calculate the estimated period of exposure (EPE) as the 75th percentile of the distribution of time periods between dispensings of medicines at the level of PBS codes.
   #' Gaps in dispensing are excluded from this period based on a default of 180 days (although alternative values can be specified).
+  #' Original code has been modified to comment out the date variable check
   #'
   #'
   #' @param data data.frame containing input data; check your input data is a data.frame and not a tibble, coerce to data.frame if necessary. To use, specify data=your_input_data
